@@ -32,7 +32,7 @@ async def get_thoughts(limit: int = 50):
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row
         cursor = await db.execute(
-            "SELECT id, content, created_at FROM thoughts ORDER BY created_at DESC LIMIT ?",
+            "SELECT id, content, created_at FROM thoughts ORDER BY created_at DESC, id DESC LIMIT ?",
             (limit,)
         )
         rows = await cursor.fetchall()
