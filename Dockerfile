@@ -1,19 +1,29 @@
-FROM python:3.12-slim
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy static files
+COPY index.html /usr/share/nginx/html/
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Custom nginx config for SPA-like behavior
+RUN echo 'server { \
+    listen 80; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    \
+    location / { \
+        try_files $uri $uri/ /index.html; \
+    } \
+    \
+    # Cache static assets \
+    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ { \
+        expires 1y; \
+        add_header Cache-Control "public, immutable"; \
+    } \
+    \
+    # Security headers \
+    add_header X-Frame-Options "SAMEORIGIN" always; \
+    add_header X-Content-Type-Options "nosniff" always; \
+}' > /etc/nginx/conf.d/default.conf
 
-# Copy application
-COPY . .
+EXPOSE 80
 
-# Create data directory
-RUN mkdir -p /data
-
-# Expose port
-EXPOSE 8000
-
-# Run the app
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["nginx", "-g", "daemon off;"]
