@@ -9,6 +9,12 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
     volumes:
       - kai-data:/data
+    networks:
+      - coolify
 
 volumes:
   kai-data:
+
+networks:
+  coolify:
+    external: true
