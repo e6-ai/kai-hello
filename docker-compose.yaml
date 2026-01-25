@@ -1,0 +1,14 @@
+services:
+  kai:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_PATH=/data/kai.db
+      - ADMIN_KEY=${ADMIN_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - kai-data:/data
+
+volumes:
+  kai-data:
